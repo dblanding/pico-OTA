@@ -39,12 +39,13 @@ class OTAUpdater:
         self.firmware_url = self.repo_url + filename
         response = urequests.get(self.firmware_url)
         if response.status_code == 200:
-            print(f'Fetched latest firmware code, status: {response.status_code}, -  {response.text}')
+            print(f'Fetched file {filename}, status: {response.status_code}')
     
             # Save the fetched code to file (with prepended '_')
             new_code = response.text
             with open(f'_{filename}', 'w') as f:
                 f.write(new_code)
+            print(f'Saved as _{filename}')
             return True
         
         elif response.status_code == 404:
@@ -85,10 +86,12 @@ class OTAUpdater:
             for filename in self.filename_list:
                 newfile = f"_{filename}"
                 os.rename(newfile, filename)
+                print(f'Renamed _{filename} to {filename}, overwriting existing file')
 
             # save the current version
             with open('version.json', 'w') as f:
                 json.dump({'version': self.latest_version}, f)
+            print('Update version from {self.current_version} to {self.latest_version}')
 
             # Restart the device to run the new code.
             print('Restarting device...')
