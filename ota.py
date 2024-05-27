@@ -16,7 +16,7 @@ class OTAUpdater:
         elif "github.com" in repo_url:
             print(f"Updating {repo_url} to raw.githubusercontent'")
             self.repo_url = repo_url.replace("github","raw.githubusercontent")            
-        self.version_url = repo_url + 'version.json'
+        self.version_url = self.repo_url + 'version.json'
         print(f"version url is: {self.version_url}")
         self.filename_list = [filename for filename in filenames]
 
@@ -36,7 +36,8 @@ class OTAUpdater:
         """ Fetch the code from the repo, returns False if not found."""
     
         # Fetch the latest code from the repo.
-        response = urequests.get(self.firmware_url+filename)
+        self.firmware_url = self.repo_url + filename
+        response = urequests.get(self.firmware_url)
         if response.status_code == 200:
             print(f'Fetched latest firmware code, status: {response.status_code}, -  {response.text}')
     
