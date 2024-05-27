@@ -95,6 +95,7 @@ class OTAUpdater:
 
             # Restart the device to run the new code.
             print('Restarting device...')
+            sleep(0.3)
             machine.reset() 
         else:
             print('No new updates available.')
