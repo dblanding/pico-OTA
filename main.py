@@ -1,10 +1,12 @@
+# pico-OTA
+
 import gc
 import micropython
 from  machine import Pin, RTC
 import network
 from ntptime import settime
 import time
-import _thread
+import sys
 from secrets import secrets
 import uasyncio as asyncio
 from ota import OTAUpdater
@@ -33,9 +35,10 @@ onboard = Pin("LED", Pin.OUT, value=0)
 
 html = """<!DOCTYPE html>
 <html>
-    <head> <title>Re-Connect on Power Failure</title> </head>
-    <body> <h1>Re-Connect</h1>
+    <head> <title>Pico Development</title> </head>
+    <body> <h1>Re-Connect on PF, Multi-OTA, uPy version info</h1>
         <h3>%s</h3>
+        <h4>%s</h4>
         <pre>%s</pre>
     </body>
 </html>
@@ -103,6 +106,8 @@ async def serve_client(reader, writer):
         while await reader.readline() != b"\r\n":
             pass
 
+        version = f"MicroPython Version: {sys.version}"
+
         if '/log' in request_line.split()[1]:
             with open(LOGFILENAME) as file:
                 data = file.read()
@@ -118,7 +123,7 @@ async def serve_client(reader, writer):
 
         data += gc_text
 
-        response = html % (heading, data)
+        response = html % (heading, version, data)
         writer.write('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
         writer.write(response)
 
